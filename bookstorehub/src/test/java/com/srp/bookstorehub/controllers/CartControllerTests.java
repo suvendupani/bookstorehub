@@ -15,54 +15,50 @@ import com.srp.bookstorehub.dto.Book;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
+import java.util.List;
 
-@WebMvcTest(BookController.class)
-class BookControllerTests {
+
+@WebMvcTest(CartController.class)
+class CartControllerTests {
 
 	@Autowired
 	MockMvc mockMvc;
 	
 	@Test
-	void getAllBooks_success() throws Exception {
+	void getAllOrders_success() throws Exception {
 		ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-				.get("/books")
+				.get("/cart/user/1001")
 				.contentType(MediaType.APPLICATION_JSON));
 		result.andExpect(status().isOk());
 	}
 	
 	@Test
-	void getBook_success() throws Exception {
+	void createOrder_success() throws Exception {
+		Book book = new Book("4","Book 5", "James", "500");
 		ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-				.get("/books/1")
-				.contentType(MediaType.APPLICATION_JSON));
-		result.andExpect(status().isOk());
-	}
-
-	@Test
-	void createBook_success() throws Exception {
-		Book book = new Book("Book 5", "James", "500");
-		ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-				.post("/books")
+				.post("/cart/user/1001")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(new ObjectMapper().writeValueAsString(book)));
 		result.andExpect(status().isOk());
 	}
 	
 	@Test
-	void updateBook_success() throws Exception {
-		
-		Book book = new Book("4", "Bookkk 4", "Jimmy", "600");
+	void processOrder_success() throws Exception {
+		List<Book> booklist = new ArrayList<>();
+		booklist.add(new Book("4", "Bookkk 4", "Jimmy", "600"));
+		booklist.add(new Book("3", "Bookkk 3", "Jimmy", "600"));
 		ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-				.put("/books")
+				.post("/cart/user/1001/process")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(new ObjectMapper().writeValueAsString(book)));
+				.content(new ObjectMapper().writeValueAsString(booklist)));
 		result.andExpect(status().isOk());
 	}
 	
 	@Test
-	void deleteBook_success() throws Exception {
+	void deleteOrder_success() throws Exception {
 		ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-				.delete("/books/1")
+				.delete("/cart/user/1001/books/1")
 				.contentType(MediaType.APPLICATION_JSON));
 		result.andExpect(status().isOk());
 	}
